@@ -4,9 +4,13 @@ wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/p
 
 echo "Compiling palm"
 mkdir $HOME/palm && bash install -p $HOME/palm
-export PATH=/home/batch-explorer-user/palm/bin:${PATH}
-cd $HOME/palm && mkdir -p $HOME/palm/JOBS/example_cbl/INPUT && cp /home/batch-explorer-user/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d /home/batch-explorer-user/palm/JOBS/example_cbl/INPUT/
+export PATH=$HOME/palm/bin:${PATH}
+
+echo "Copying basefile"
+cd $HOME/palm && mkdir -p $HOME/palm/JOBS/example_cbl/INPUT 
+cp $HOME/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d $HOME/palm/JOBS/example_cbl/INPUT/
 
 cd ..
 echo "Creating zip file"
-zip -r palm.zip palm
+zip -r palm.zip palm palm_model_system-master
+echo "Everything done"
