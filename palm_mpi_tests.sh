@@ -1,9 +1,9 @@
 #!/bin/bash
 echo "Downloading palm"
 python3 get_ip_and_tasks.py
-printenv AZ_BATCH_HOST_LIST
+echo "$AZ_BATCH_HOST_LIST"
 echo "python variable"
-echo $MPI_HOST_SETTINGS
+echo "$MPI_HOST_SETTINGS"
 
 echo "amount of cores"
 nproc
