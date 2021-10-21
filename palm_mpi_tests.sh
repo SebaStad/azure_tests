@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Downloading palm"
-echo $AZ_BATCH_HOST_LIST
+printenv $AZ_BATCH_HOST_LIST
 #wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
 
 #echo "Compiling palm"
