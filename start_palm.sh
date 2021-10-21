@@ -12,3 +12,7 @@ cp $HOME/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/IN
 
 echo "Starting palm"
 palmrun -a "d3#" -X 4 -r example_cbl
+
+echo "Simulation results"
+filepath_results=$(ls wd/palm/JOBS/example_cbl/OUTPUT)
+echo $filepath_results
