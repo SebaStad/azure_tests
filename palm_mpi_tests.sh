@@ -1,6 +1,14 @@
 #!/bin/bash
 echo "Downloading palm"
 printenv AZ_BATCH_HOST_LIST
+
+echo "amount of cores"
+nproc
+echo "ifconfig stats"
+ifconfig
+echo "bold assumption of ip addresses"
+nmap -sn 10.0.0.0/24
+
 #wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
 
 #echo "Compiling palm"
