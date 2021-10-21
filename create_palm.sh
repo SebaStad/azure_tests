@@ -1,8 +1,4 @@
 #!/bin/bash
-
-echo "Updating System and getting libraries"
-apt-get update && apt-get upgrade -y && apt-get install -y gfortran g++ make cmake libopenmpi-dev openmpi-bin libnetcdff-dev netcdf-bin libfftw3-dev python3-pip python3-pyqt5 flex bison ncl-ncarg
-
 echo "Downloading palm"
 wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
 
