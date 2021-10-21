@@ -1,6 +1,8 @@
 #!/bin/bash
 echo "Downloading palm"
 printenv AZ_BATCH_HOST_LIST
+echo "python variable"
+echo $MPI_HOST_SETTINGS
 
 echo "amount of cores"
 nproc
