@@ -7,14 +7,8 @@ echo "amount of cores"
 nproc
 echo "nmap stuff"
 export first_try=$(nmap -n -sn 10.0.0.0/24 -oG - | awk '/Up$/{print $2}'| paste -sd ,)
-echo "print"
-echo "$first_try"
 export second_try=$(echo "$first_try" | awk '{ gsub(",", ":2,") ; system( "echo "  $0) }')
-echo "print2"
-echo "$second_try"
 export second_try+=$":2"
-echo "print3"
-echo "$second_try"
 
 
 #wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
