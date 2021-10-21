@@ -12,6 +12,7 @@ export second_try=$(echo "$first_try" | awk '{ gsub(",", ":2,") ; system( "echo 
 export second_try+=$":2"
 
 export command_option=$(echo "-host ")
+export command_option+="$second_try"
 echo "$command_option"
 
 echo "Compiling palm"
