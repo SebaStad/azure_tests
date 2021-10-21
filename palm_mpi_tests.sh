@@ -1,16 +1,16 @@
 #!/bin/bash
 echo "Downloading palm"
-python3 get_ip_and_tasks.py
+
 echo "$AZ_BATCH_HOST_LIST"
-echo "python variable"
-echo "$MPI_HOST_SETTINGS"
 
 echo "amount of cores"
 nproc
-echo "ifconfig stats"
-ifconfig
-echo "bold assumption of ip addresses"
-nmap -sn 10.0.0.0/24
+echo "nmap stuff"
+export first_try=$(nmap -n -sn 10.0.0.0/24 -oG - | awk '/Up$/{print $2}'| paste -sd ,)
+echo "print"
+echo "$first_try"
+
+
 
 #wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
 
