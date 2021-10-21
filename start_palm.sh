@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "Downloading palm"
+echo $AZ_BATCH_HOST_LIST
 wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
 
 echo "Compiling palm"
@@ -14,5 +15,5 @@ echo "Starting palm"
 palmrun -a "d3#" -X 4 -r example_cbl
 
 echo "Simulation results"
-filepath_results=$(ls wd/palm/JOBS/example_cbl/OUTPUT)
+filepath_results=$(ls $HOME/palm/JOBS/example_cbl/OUTPUT)
 echo $filepath_results
