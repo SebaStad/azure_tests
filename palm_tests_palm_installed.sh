@@ -21,10 +21,10 @@ echo "$command_option"
 #sed -i "2145 i \ \ \ \ execute_command=\$(echo \${execute_command:0:6} ${command_option}\${execute_command:7:\${size}})" $HOME/palm/bin/palmrun
 #sed -i "2146 i \ \ \ \ printf \"\n  \"$execute_command\" \n\"" $HOME/palm/bin/palmrun
 
-cd palmbase/palm/
+cd /palmbase/palm/
 
 echo "Starting palm"
-palmrun -a "d3#" -X 4 -r example_cbl
+./bin/palmrun -a "d3#" -X 4 -r example_cbl
 
 echo "Simulation results"
 filepath_results=$(ls palmbase/palm/JOBS/example_cbl/OUTPUT)
