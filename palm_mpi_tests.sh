@@ -25,8 +25,8 @@ cp $HOME/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/IN
 
 echo "Adjusting palmrun"
 size=${#execute_command}
-sed "2142 i # added comment" $HOME/palm/bin/palmrun
-sed "2143 i $execute_command=$(echo ${execute_command:0:6} ${command_option}${execute_command:7:${size}})"
+sed -i "2142 i # added comment" $HOME/palm/bin/palmrun
+sed -i "2143 i $execute_command=$(echo ${execute_command:0:6} ${command_option}${execute_command:7:${size}})" $HOME/palm/bin/palmrun
 
 echo "Starting palm"
 palmrun -a "d3#" -X 4 -r example_cbl
