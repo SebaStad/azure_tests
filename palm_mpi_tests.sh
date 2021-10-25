@@ -8,7 +8,7 @@ echo "amount of cores"
 nproc
 echo "nmap stuff"
 export first_try=$(nmap -n -sn 10.0.0.0/24 -oG - | awk '/Up$/{print $2}'| paste -sd ,)
-export second_try=$(echo "$first_try" | awk '{ gsub(",", ":2,") ; system( "echo "  $0) }')
+export second_try=$(echo "$first_try" | awk '{ gsub(",", ":1,") ; system( "echo "  $0) }')
 export second_try+=$":1"
 
 export command_option=$(echo "-host ")
@@ -24,10 +24,12 @@ cd $HOME/palm && mkdir -p $HOME/palm/JOBS/example_cbl/INPUT
 cp $HOME/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d $HOME/palm/JOBS/example_cbl/INPUT/
 
 echo "Adjusting palmrun"
+size=${#execute_command}
 sed "2142 i # added comment" $HOME/palm/bin/palmrun
+sed "2143 i $ execute_command=$(echo ${execute_command:0:6} ${command_option}${execute_command:7:${size}})
 
 echo "Starting palm"
-palmrun -a "d3#" -X 1 -r example_cbl
+palmrun -a "d3#" -X 4 -r example_cbl
 
 echo "Simulation results"
 filepath_results=$(ls $HOME/palm/JOBS/example_cbl/OUTPUT)
