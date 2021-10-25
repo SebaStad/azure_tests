@@ -9,7 +9,7 @@ nproc
 echo "nmap stuff"
 export first_try=$(nmap -n -sn 10.0.0.0/24 -oG - | awk '/Up$/{print $2}'| paste -sd ,)
 export second_try=$(echo "$first_try" | awk '{ gsub(",", ":2,") ; system( "echo "  $0) }')
-export second_try+=$":2"
+export second_try+=$":1"
 
 export command_option=$(echo "-host ")
 export command_option+="$second_try"
@@ -27,7 +27,7 @@ echo "Adjusting palmrun"
 sed "2142 i # added comment" $HOME/palm/bin/palmrun
 
 echo "Starting palm"
-palmrun -a "d3#" -X 2 -r example_cbl
+palmrun -a "d3#" -X 1 -r example_cbl
 
 echo "Simulation results"
 filepath_results=$(ls $HOME/palm/JOBS/example_cbl/OUTPUT)
