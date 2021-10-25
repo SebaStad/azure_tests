@@ -24,7 +24,7 @@ echo "$command_option"
 cd /palmbase/palm/
 
 echo "Starting palm"
-./bin/palmrun -a "d3#" -X 4 -r example_cbl
+./bin/palmrun -a "d3#" -X 1 -r example_cbl
 
 echo "Simulation results"
 filepath_results=$(ls palmbase/palm/JOBS/example_cbl/OUTPUT)
