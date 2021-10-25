@@ -13,3 +13,5 @@ export PATH=/palmbase/palm/bin:${PATH}
 echo "Copying basefile"
 cd /palmbase/palm && mkdir -p /palmbase/palm/JOBS/example_cbl/INPUT 
 cp /palmbase/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d /palmbase/palm/JOBS/example_cbl/INPUT/
+
+sudo chmod -R 777 /palmbase
