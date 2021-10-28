@@ -10,7 +10,7 @@ export first_try=$(nmap -n -sn 10.0.0.0/24 -oG - | awk '/Up$/{print $2}'| paste 
 export second_try=$(echo "$first_try" | awk '{ gsub(",", ":1,") ; system( "echo "  $0) }')
 export second_try+=$":1"
 
-export command_option=$(echo "-host ")
+export command_option=$(echo "--host ")
 export command_option+="$second_try"
 echo "$command_option"
 
