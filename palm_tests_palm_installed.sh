@@ -16,11 +16,11 @@ echo "$command_option"
 
 #echo "Adjusting palmrun"
 #size=${#execute_command}
-#sed -i "2142 i # added comment" $HOME/palm/bin/palmrun
-#sed -i "2143 i \ \ \ \ size=\${#execute_command}" $HOME/palm/bin/palmrun
-#sed -i "2144 i \ \ \ \ printf \"\n  \"$size\" \n\"" $HOME/palm/bin/palmrun
-#sed -i "2145 i \ \ \ \ execute_command=\$(echo \${execute_command:0:6} ${command_option}\${execute_command:7:\${size}})" $HOME/palm/bin/palmrun
-#sed -i "2146 i \ \ \ \ printf \"\n  \"$execute_command\" \n\"" $HOME/palm/bin/palmrun
+sed -i "2142 i # added comment" $HOME/palm/bin/palmrun
+sed -i "2143 i \ \ \ \ size=\${#execute_command}" $HOME/palm/bin/palmrun
+sed -i "2144 i \ \ \ \ printf \"\n  \"$size\" \n\"" $HOME/palm/bin/palmrun
+sed -i "2145 i \ \ \ \ execute_command=\$(echo \${execute_command:0:6} ${command_option}\${execute_command:7:\${size}})" $HOME/palm/bin/palmrun
+sed -i "2146 i \ \ \ \ printf \"\n  \"$execute_command\" \n\"" $HOME/palm/bin/palmrun
 
 cd /palmbase/palm/
 
