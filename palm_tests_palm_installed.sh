@@ -1,8 +1,7 @@
 #!/bin/bash
 echo "NodeListAzure"
 echo "$AZ_BATCH_NODE_LIST"
-
-enc
+env
 
 echo "amount of cores"
 nproc
