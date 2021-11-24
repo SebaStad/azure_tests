@@ -6,12 +6,25 @@ mkdir /palmbase
 cd /palmbase
 wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
 
-echo "Compiling palm"
-mkdir /palmbase/palm && bash install -p /palmbase/palm
-export PATH=/palmbase/palm/bin:${PATH}
+# echo "Compiling palm"
+# mkdir /palmbase/palm && bash install -p /palmbase/palm
+# export PATH=/palmbase/palm/bin:${PATH}
+
+cd /mnt/batch/tasks/fsmounts/shared/
+mkdir -p palmbase/palm
+cd palmbase
+
+wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
+bash install -p ../palm
+
 
 echo "Copying basefile"
-cd /palmbase/palm && mkdir -p /palmbase/palm/JOBS/example_cbl/INPUT 
-cp /palmbase/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d /palmbase/palm/JOBS/example_cbl/INPUT/
+# cd /palmbase/palm && mkdir -p /palmbase/palm/JOBS/example_cbl/INPUT 
+# cp /palmbase/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d /palmbase/palm/JOBS/example_cbl/INPUT/
 
-sudo chmod -R 777 /palmbase
+cd ../palm && mkdir -p JOBS/example_cbl/INPUT 
+cp ../palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d JOBS/example_cbl/INPUT/
+
+# sudo chmod -R 777 /palmbase
+
+sudo chmod -R 777 ../
