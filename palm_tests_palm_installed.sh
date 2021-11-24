@@ -22,13 +22,13 @@ echo "$command_option"
 # sed -i "2144 i \ \ \ \ execute_command=\$(echo \${execute_command:0:6} ${command_option}\${execute_command:7:\${size}})" /palmbase/palm/bin/palmrun
 # sed -i "2146 i \ \ \ \ printf \"\n  \"$execute_command\" \n\"" /palmbase/palm/bin/palmrun
 
-cd /palmbase/palm/
+cd /mnt/batch/tasks/fsmounts/shared/palmbase/palm/
 
 echo "Starting palm"
 ./bin/palmrun -a "d3#" -X 2 -r example_cbl
 
 echo "Simulation results"
-filepath_results=$(ls palmbase/palm/JOBS/example_cbl/OUTPUT)
+filepath_results=$(ls /mnt/batch/tasks/fsmounts/shared/palmbase/palm/JOBS/example_cbl/OUTPUT)
 echo $filepath_results
 
 
