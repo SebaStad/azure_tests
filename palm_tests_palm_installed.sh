@@ -25,7 +25,7 @@ echo "$command_option"
 cd /mnt/batch/tasks/fsmounts/shared/palmbase/palm/
 
 echo "Starting palm"
-./bin/palmrun -a "d3#" -X 2 -r example_cbl
+./bin/palmrun -a "d3#" -X 2 -T 1 -r example_cbl
 
 echo "Simulation results"
 filepath_results=$(ls /mnt/batch/tasks/fsmounts/shared/palmbase/palm/JOBS/example_cbl/OUTPUT)
