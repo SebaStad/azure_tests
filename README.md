@@ -6,6 +6,13 @@ Das ganze ist zweigeteilt:
 * Skripte, die die Umgebung in Azure aufbauen, und dann PALM anwerfen. Diese befinden sich im Ordner "01_start_pool_and_palm"
 * Skripte, die auf den Azure Machinen ausgeführt werden, zum einen "startup"-Tasks, als auch das finale Skript für die Simulation
 
+## Manuelle Anpassungen
+Wir sind jetzt im Laufe der Übergabe noch auf ein paar Dinge gestoßen:
+PALM sollte im shared directory laufen, das basis directory ist jetzt:
+    /mnt/batch/tasks/fsmounts/shared/
+
+Dort sind wir jetzt übergegangen, den "execute_command" nicht im "palmrun" skript, sondern in der palm.config. umzustellen. Das muss derzeit noch manuell geschehen!
+Die Anpassungen sollten (im Standard Setup) sich auf "--host 10.0.0.4:1,10.0.0.5:1" beschränken, je nach Setup kann sich das aber auch ändern.
 
 ## Start Pool und PALM
 Die Skripte hier sind genauso aufgebaut, wie das originale Beispiel von Kai. Es gibt benötigt eine "variables.sh" mit einigen Parametern,
