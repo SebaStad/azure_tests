@@ -3,7 +3,7 @@
 # Variables
 source variables.sh
 
-run_id="04"
+run_id="09"
 
 # Create job to create the application packahe
 az batch job create --id palm-sim${run_id} --pool-id ${pool_id}

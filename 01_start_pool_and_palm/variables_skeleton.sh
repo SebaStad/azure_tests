@@ -11,6 +11,9 @@ batch_rg=""
 region="westeurope"
 # Unique batch account name (e.g. batchwsaccount3245353)
 batch_account_name=""
+# Unique extension for the keyvault name (e.g. kv234)
+# Maxc 24 Zeichen für  ${batch_account_name}${keyvault_extension} 
+keyvault_extension="kv18"
 
 
 # Die restlichen Parameter sind Variabel, sollten aber einer
@@ -36,10 +39,6 @@ nfs_storage_account_name=""
 # Name of tha Azure Files fileshare
 nfs_share="shared"
 
-# Unique extension for the keyvault name (e.g. kv234)
-# Maxc 24 Zeichen für  ${batch_account_name}${keyvault_extension} 
-keyvault_extension="kv01"
-
 # Name des Pools
-pool_id="batch-ws-pool"
+pool_id="batch-ws2-pool"
 # Wuerde ich hier definieren
