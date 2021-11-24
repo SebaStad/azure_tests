@@ -16,10 +16,10 @@ echo "$command_option"
 
 #echo "Adjusting palmrun"
 # size=${#execute_command}
-sed -i "2142 i # added comment" /palmbase/palm/bin/palmrun
-sed -i "2143 i \ \ \ \ size=\${#execute_command}" /palmbase/palm/bin/palmrun
+# sed -i "2142 i # added comment" /palmbase/palm/bin/palmrun
+# sed -i "2143 i \ \ \ \ size=\${#execute_command}" /palmbase/palm/bin/palmrun
 # sed -i "2144 i \ \ \ \ printf \"\n  \"$size\" \n\"" /palmbase/palm/bin/palmrun
-sed -i "2144 i \ \ \ \ execute_command=\$(echo \${execute_command:0:6} ${command_option}\${execute_command:7:\${size}})" /palmbase/palm/bin/palmrun
+# sed -i "2144 i \ \ \ \ execute_command=\$(echo \${execute_command:0:6} ${command_option}\${execute_command:7:\${size}})" /palmbase/palm/bin/palmrun
 # sed -i "2146 i \ \ \ \ printf \"\n  \"$execute_command\" \n\"" /palmbase/palm/bin/palmrun
 
 cd /palmbase/palm/
