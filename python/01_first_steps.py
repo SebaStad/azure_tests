@@ -81,7 +81,7 @@ def create_pool(batch_service_client: BatchServiceClient, pool_id: str):
         # mount_configuration=batchmodels.MountConfiguration(
         # )
         start_task=batchmodels.StartTask(
-            command_line="bash -c \"wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/startup_tasks.sh;chmod u+x startup_tasks.sh;./startup_tasks.sh\"",
+            command_line="bash -c \"wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/startup_tasks_manual.sh;chmod u+x startup_tasks_manual.sh;./startup_tasks_manual.sh\"",
             user_identity=batchmodels.UserIdentity(
                 auto_user=batchmodels.AutoUserSpecification(
                     scope="pool",
@@ -124,7 +124,7 @@ def add_tasks(batch_service_client: BatchServiceClient, job_id: str, idx = 1):
     """
     print(f'Adding tasks to job [{job_id}]...')
     tasks = []
-    command = f"/bin/bash -c 'wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/palm_tests_palm_installed.sh;chmod u+x palm_tests_palm_installed.sh;./palm_tests_palm_installed.sh'"
+    command = f"/bin/bash -c 'wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/test_modules.sh;chmod u+x test_modules.sh;./test_modules.sh'"
     tasks.append(batchmodels.TaskAddParameter(
         id=f'Task{idx}',
         display_name=display_name,
@@ -205,9 +205,9 @@ full_id=f"palm-sim-task{config.JOB_ID}"
 display_name=f"palm-sim{config.JOB_ID}"
 
 
-new_job = "1"
+new_job = "3"
 
 create_job(batch_client, new_job, config.POOL_ID)
-add_tasks(batch_client, new_job, 6)
+add_tasks(batch_client, new_job, 1)
 
 # batch_client.pool.delete(config.POOL_ID)
