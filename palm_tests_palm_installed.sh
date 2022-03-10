@@ -1,4 +1,8 @@
 #!/bin/bash
+echo "NodeListAzure"
+echo "$AZ_BATCH_NODE_LIST"
+env
+
 echo "Modules"
 module avail
 
