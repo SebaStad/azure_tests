@@ -3,6 +3,9 @@ echo "NodeListAzure"
 echo "$AZ_BATCH_NODE_LIST"
 env
 
+echo "Modules"
+module avail
+
 echo "amount of cores"
 nproc
 echo "nmap stuff"

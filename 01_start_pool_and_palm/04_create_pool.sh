@@ -35,7 +35,7 @@ cat << EOF >  ${pool_id}.json
   "networkConfiguration": {
     "subnetId": "$compute_subnet_id"
   },
-  "maxTasksPerNode": 2,
+  "maxTasksPerNode": 1,
   "taskSchedulingPolicy": {
     "nodeFillType": "Pack"
   },
