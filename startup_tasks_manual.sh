@@ -3,8 +3,10 @@ echo "Update sys"
 sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install -y make cmake libfftw3-dev python3-pip python3-pyqt5 flex bison ncl-ncarg nmap libcurl4-openssl-dev
 
 echo "Downloading palm"
-mkdir /palmbase
-cd /palmbase
+
+export BASEDIR=/palmbase
+mkdir $BASEDIR
+cd $BASEDIR
 wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
 
 wget -c http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
@@ -15,10 +17,10 @@ wget -c https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.2.tar.g
 
 module load mpi/hpcx
 
-sudo mkdir /palmbase/LIBRARIES
-cd /palmbase
+sudo mkdir $BASEDIR/LIBRARIES
+cd $BASEDIR
 sudo chmod -R 777 .
-export DIR=/palmbase/LIBRARIES
+export DIR=$BASEDIR/LIBRARIES
 
 export LDFLAGS=-L$DIR/lib
 export CPPFLAGS=-I$DIR/include
@@ -27,8 +29,7 @@ export CC=mpicc
 export CXX=mpicxx
 export FC=mpif90
 
-cd /palmbase
-
+cd $BASEDIR
 
 tar -xvzf zlib-1.2.11.tar.gz
 cd zlib-1.2.11/
@@ -36,7 +37,7 @@ cd zlib-1.2.11/
 make
 make install
 
-cd /palmbase
+cd $BASEDIR
 tar -xvzf hdf5-1.12.0.tar.gz
 cd hdf5-1.12.0
 export FLAGS=-fPIC
@@ -49,7 +50,7 @@ export HDF5=$DIR
 export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH
 
 
-cd /palmbase
+cd $BASEDIR
 tar -xf netcdf-c-4.7.4.tar.gz
 cd netcdf-c-4.7.4/
 
@@ -66,7 +67,7 @@ export PATH=$DIR/bin:$PATH
 export NETCDF=$DIR
 
 
-cd /palmbase
+cd $BASEDIR
 tar -xvzf v4.5.2.tar.gz
 cd netcdf-fortran-4.5.2/
 # export LIBS="-lnetcdf -lhdf5_hl -lhdf5 -lz"
@@ -77,12 +78,12 @@ make -i check
 make install
 
 
-cd /palmbase/palm_model_system-master
+cd $BASEDIR/palm_model_system-master
 bash install -p ../palm
 
 echo "Copying basefile"
-# cd /palmbase/palm && mkdir -p /palmbase/palm/JOBS/example_cbl/INPUT 
-# cp /palmbase/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d /palmbase/palm/JOBS/example_cbl/INPUT/
+# cd $BASEDIR/palm && mkdir -p $BASEDIR/palm/JOBS/example_cbl/INPUT 
+# cp $BASEDIR/palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d $BASEDIR/palm/JOBS/example_cbl/INPUT/
 
 cd ../palm && mkdir -p JOBS/example_cbl/INPUT 
 cp ../palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d JOBS/example_cbl/INPUT/
