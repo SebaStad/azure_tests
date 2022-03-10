@@ -11,7 +11,7 @@ from azure.storage.blob import (
     generate_blob_sas
 )
 from azure.batch import BatchServiceClient
-from azure.batch.batch_auth import SharedKeyCredentials, ServicePrincipalCredentials
+from azure.batch.batch_auth import SharedKeyCredentials
 from azure.identity import UsernamePasswordCredential
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.identity import ClientSecretCredential
@@ -34,11 +34,15 @@ so wee need the account (maybe hard set) and the network!
 # Create Pool!
 # ----------------------------------------------------
 
-compute_subnet_id=f"/subscriptions/{config.subscription_id}/resourceGroups/{config.batch_rg}/providers/Microsoft.Network/virtualNetworks/{config.batch_vnet_name}/subnets/{config.compute_subnet_name}"
+compute_subnet_id = (
+    f"/subscriptions/{config.subscription_id}/resourceGroups/"
+    f"{config.batch_rg}/providers/Microsoft.Network/virtualNetworks/"
+    f"{config.batch_vnet_name}/subnets/{config.compute_subnet_name}"
+)
 # pool_id="batch-ws-pool"
-pool_vm_size="STANDARD_F2s_v2"
-nfs_share_hostname="${nfs_storage_account_name}.file.core.windows.net"
-nfs_share_directory="/${nfs_storage_account_name}/shared"
+# pool_vm_size="STANDARD_F2s_v2"
+nfs_share_hostname = "${nfs_storage_account_name}.file.core.windows.net"
+nfs_share_directory = "/${nfs_storage_account_name}/shared"
 
 
 def create_pool(batch_service_client: BatchServiceClient, pool_id: str):
@@ -61,14 +65,16 @@ def create_pool(batch_service_client: BatchServiceClient, pool_id: str):
         vm_size=config.POOL_VM_SIZE,
         virtual_machine_configuration=batchmodels.VirtualMachineConfiguration(
             image_reference=batchmodels.ImageReference(
-                publisher="microsoft-azure-batch",
-                offer="ubuntu-server-container",
-                sku="20-04-lts",
+                publisher="microsoft-dsvm",
+                offer="ubuntu-hpc",
+                sku="2004",
                 version="latest"
             ),
-            node_agent_sku_id="batch.node.ubuntu 20.04"),
+            node_agent_sku_id="batch.node.ubuntu 20.04"
+        ),
         target_dedicated_nodes=config.POOL_NODE_COUNT,
-        enable_inter_node_communication=True,
+        # target_dedicated_nodes=1,
+        enable_inter_node_communication=False,
         # network_configuration=batchmodels.NetworkConfiguration(
         #     subnet_id=compute_subnet_id
         # ),
@@ -81,7 +87,12 @@ def create_pool(batch_service_client: BatchServiceClient, pool_id: str):
         # mount_configuration=batchmodels.MountConfiguration(
         # )
         start_task=batchmodels.StartTask(
-            command_line="bash -c \"wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/startup_tasks_manual.sh;chmod u+x startup_tasks_manual.sh;./startup_tasks_manual.sh\"",
+            command_line=(
+                "bash -c \"wget -L https://raw.githubusercontent.com/"
+                "SebaStad/azure_tests/main/startup_tasks_manual.sh;"
+                "chmod u+x startup_tasks_manual.sh;"
+                "./startup_tasks_manual.sh\""
+            ),
             user_identity=batchmodels.UserIdentity(
                 auto_user=batchmodels.AutoUserSpecification(
                     scope="pool",
@@ -113,18 +124,26 @@ def create_job(batch_service_client: BatchServiceClient, job_id: str, pool_id: s
     batch_service_client.job.add(job)
 
 
-def add_tasks(batch_service_client: BatchServiceClient, job_id: str, idx = 1):
+def add_tasks(
+    batch_service_client: BatchServiceClient,
+    job_id: str,
+    idx=1
+):
     """
     Adds a task for each input file in the collection to the specified job.
 
     :param batch_service_client: A Batch service client.
     :param str job_id: The ID of the job to which to add the tasks.
-    :param list resource_input_files: A collection of input files. One task will be
-     created for each input file.
+    :param list resource_input_files: A collection of input files.
+     One task will becreated for each input file.
     """
     print(f'Adding tasks to job [{job_id}]...')
     tasks = []
-    command = f"/bin/bash -c 'wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/test_modules.sh;chmod u+x test_modules.sh;./test_modules.sh'"
+    command = (
+        "/bin/bash -c 'wget -L https://raw.githubusercontent.com/"
+        "SebaStad/azure_tests/main/test_modules.sh;"
+        "chmod u+x test_modules.sh;./test_modules.sh'"
+    )
     tasks.append(batchmodels.TaskAddParameter(
         id=f'Task{idx}',
         display_name=display_name,
@@ -174,20 +193,24 @@ batch_client = BatchServiceClient(
 )
 
 
-batch_client.compute_node.get(config.POOL_ID)
-
 create_pool(batch_client, config.POOL_ID)
 
 batch_client.pool.get( config.POOL_ID,).state.upper()
 batch_client.pool.get( config.POOL_ID,).current_dedicated_nodes
 
 node_list = list(batch_client.compute_node.list(config.POOL_ID))
-node_list[0].state.lower()
 
 
 while batch_client.pool.get(config.POOL_ID,).current_dedicated_nodes == 0:
     print("Pool is starting!")
     time.sleep(10)
+
+time.sleep(10)
+while any(node.state.lower()=="creating" for node in node_list):
+    print("Nodes are being created")
+    time.sleep(10)
+    node_list = list(batch_client.compute_node.list(config.POOL_ID))
+
 
 while any(node.state.lower()=="waitingforstarttask" for node in node_list):
     print("Start task is running!")
@@ -195,19 +218,14 @@ while any(node.state.lower()=="waitingforstarttask" for node in node_list):
     node_list = list(batch_client.compute_node.list(config.POOL_ID))
 
 
-any(node.state.lower()=="waitingforstarttask" for node in node_list)
-
-create_job(batch_client, config.JOB_ID, config.POOL_ID)
-
 # here: checking whether pool is up or not!
 
-full_id=f"palm-sim-task{config.JOB_ID}"
-display_name=f"palm-sim{config.JOB_ID}"
+full_id = f"palm-sim-task{config.JOB_ID}"
+display_name = f"palm-sim{config.JOB_ID}"
 
-
-new_job = "3"
+new_job = "8"
 
 create_job(batch_client, new_job, config.POOL_ID)
-add_tasks(batch_client, new_job, 1)
+add_tasks(batch_client, new_job, 22)
 
 # batch_client.pool.delete(config.POOL_ID)
