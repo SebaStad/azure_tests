@@ -125,6 +125,7 @@ def create_job(batch_service_client: BatchServiceClient, job_id: str, pool_id: s
 def add_tasks(
     batch_service_client: BatchServiceClient,
     job_id: str,
+    ressource_file,
     idx=1
 ):
     """
@@ -140,14 +141,14 @@ def add_tasks(
     tasks = []
     command = (
         "/bin/bash -c 'wget -L https://raw.githubusercontent.com/"
-        "SebaStad/azure_tests/main/test_modules.sh;"
-        "chmod u+x test_modules.sh;./test_modules.sh'"
+        "SebaStad/azure_tests/main/run_palm.sh;"
+        "chmod u+x run_palm.sh;./run_palm.sh'"
     )
     tasks.append(batchmodels.TaskAddParameter(
         id=f'Task{idx}',
         display_name=display_name,
         command_line=command,
-        resource_files=[],
+        resource_files=ressource_file,
         environment_settings=[
             batchmodels.EnvironmentSetting(
                 name="NODES",
@@ -294,8 +295,7 @@ display_name = f"palm-sim{config.JOB_ID}"
 # batch_client.pool.delete(config.POOL_ID)
 
 input_file_paths = [
-    os.path.join(sys.path[0], 'test_p3d'),
-    os.path.join(sys.path[0], 'test_static')
+    os.path.join(sys.path[0], 'test.zip')
 ]
 # Upload the data files.
 

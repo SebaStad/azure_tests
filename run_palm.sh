@@ -1,9 +1,8 @@
 export cwd=$(pwd)
-
-
-
-
 export BASEDIR=/palmbase
+
+unzip test.zip
+
 cd $BASEDIR/palm
 module load mpi/hpcx
 
