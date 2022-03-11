@@ -156,7 +156,7 @@ def add_tasks(
             ),
             batchmodels.EnvironmentSetting(
                 name="PPN",
-                value="2"
+                value="44"
             )
         ],
         constraints=batchmodels.TaskConstraints(
@@ -198,7 +198,7 @@ create_pool(batch_client, config.POOL_ID)
 batch_client.pool.get( config.POOL_ID,).state.upper()
 batch_client.pool.get( config.POOL_ID,).current_dedicated_nodes
 
-node_list = list(batch_client.compute_node.list(config.POOL_ID))
+
 
 
 while batch_client.pool.get(config.POOL_ID,).current_dedicated_nodes == 0:
@@ -206,6 +206,8 @@ while batch_client.pool.get(config.POOL_ID,).current_dedicated_nodes == 0:
     time.sleep(10)
 
 time.sleep(10)
+
+node_list = list(batch_client.compute_node.list(config.POOL_ID))
 while any(node.state.lower()=="creating" for node in node_list):
     print("Nodes are being created")
     time.sleep(10)
@@ -223,7 +225,7 @@ while any(node.state.lower()=="waitingforstarttask" for node in node_list):
 full_id = f"palm-sim-task{config.JOB_ID}"
 display_name = f"palm-sim{config.JOB_ID}"
 
-new_job = "8"
+new_job = "9"
 
 create_job(batch_client, new_job, config.POOL_ID)
 add_tasks(batch_client, new_job, 22)
