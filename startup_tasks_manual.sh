@@ -13,8 +13,10 @@ wget -c http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
 wget -c https://www.zlib.net/zlib-1.2.11.tar.gz
 wget -c https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.gz
 wget -c https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.7.4.tar.gz
-wget -c https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.2.tar.gz
+wget -c https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.4.tar.gz
 
+export BASEDIR=/palmbase
+mkdir $BASEDIR
 module load mpi/hpcx
 
 sudo mkdir $BASEDIR/LIBRARIES
@@ -51,8 +53,6 @@ export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH
 
 
 cd $BASEDIR
-tar -xf netcdf-c-4.7.4.tar.gz
-cd netcdf-c-4.7.4/
 
 tar -xvzf v4.7.4.tar.gz
 cd netcdf-c-4.7.4/
@@ -68,8 +68,8 @@ export NETCDF=$DIR
 
 
 cd $BASEDIR
-tar -xvzf v4.5.2.tar.gz
-cd netcdf-fortran-4.5.2/
+tar -xvzf v4.5.4.tar.gz
+cd netcdf-fortran-4.5.4/
 # export LIBS="-lnetcdf -lhdf5_hl -lhdf5 -lz"
 export LDFLAGS="-L$DIR/lib -fPIC"
 export CPPFLAGS=-I$DIR/include

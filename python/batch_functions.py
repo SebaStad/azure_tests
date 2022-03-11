@@ -21,22 +21,6 @@ from azure.core.exceptions import ResourceExistsError
 
 import config
 
-import azure_functions as af
-import batch_functions as bf
-
-DEFAULT_ENCODING = "utf-8"
-
-"""
-Bash Scripts 01 - 03 must be carried out first!
-These should be implemented in first start of simulation container!
-However, e.g. storage is not need
-so wee need the account (maybe hard set) and the network!
-"""
-#
-
-# ----------------------------------------------------
-# functions
-# ----------------------------------------------------
 
 
 def create_pool(batch_service_client: BatchServiceClient, pool_id: str):
@@ -113,10 +97,6 @@ def create_job(batch_service_client: BatchServiceClient, job_id: str, pool_id: s
         id=job_id,
         pool_info=batchmodels.PoolInformation(
             pool_id=pool_id
-        ),
-        constraints=batchmodels.JobConstraints(
-            max_wall_clock_time="P10675199DT2H48M5.477S",
-            max_task_retry_count=2
         )
     )
     batch_service_client.job.add(job)
@@ -125,6 +105,7 @@ def create_job(batch_service_client: BatchServiceClient, job_id: str, pool_id: s
 def add_tasks(
     batch_service_client: BatchServiceClient,
     job_id: str,
+    input_files: list = [],
     idx=1
 ):
     """
@@ -147,7 +128,7 @@ def add_tasks(
         id=f'Task{idx}',
         display_name=display_name,
         command_line=command,
-        resource_files=[],
+        resource_files=input_files,
         environment_settings=[
             batchmodels.EnvironmentSetting(
                 name="NODES",
@@ -176,149 +157,3 @@ def add_tasks(
         )
     ))
     batch_service_client.task.add_collection(job_id, tasks)
-
-
-def upload_file_to_container(
-    blob_storage_service_client: BlobServiceClient,
-    container_name: str, file_path: str
-) -> batchmodels.ResourceFile:
-    """
-    Uploads a local file to an Azure Blob storage container.
-
-    :param blob_storage_service_client: A blob service client.
-    :param str container_name: The name of the Azure Blob storage container.
-    :param str file_path: The local path to the file.
-    :return: A ResourceFile initialized with a SAS URL appropriate for Batch
-    tasks.
-    """
-    blob_name = os.path.basename(file_path)
-    blob_client = blob_storage_service_client.get_blob_client(container_name, blob_name)
-    print(f'Uploading file {file_path} to container [{container_name}]...')
-    with open(file_path, "rb") as data:
-        blob_client.upload_blob(data, overwrite=True)
-    sas_token = generate_blob_sas(
-        config.STORAGE_ACCOUNT_NAME,
-        container_name,
-        blob_name,
-        account_key=config.STORAGE_ACCOUNT_KEY,
-        permission=BlobSasPermissions(read=True),
-        expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2)
-    )
-    sas_url = generate_sas_url(
-        config.STORAGE_ACCOUNT_NAME,
-        config.STORAGE_ACCOUNT_DOMAIN,
-        container_name,
-        blob_name,
-        sas_token
-    )
-    return batchmodels.ResourceFile(
-        http_url=sas_url,
-        file_path=blob_name
-    )
-
-
-def generate_sas_url(
-    account_name: str,
-    account_domain: str,
-    container_name: str,
-    blob_name: str,
-    sas_token: str
-) -> str:
-    """
-    Generates and returns a sas url for accessing blob storage
-    """
-    return f"https://{account_name}.{account_domain}/{container_name}/{blob_name}?{sas_token}"
-
-
-# ----------------------------------------------------
-# Create Pool!
-# ----------------------------------------------------
-
-compute_subnet_id = (
-    f"/subscriptions/{config.subscription_id}/resourceGroups/"
-    f"{config.batch_rg}/providers/Microsoft.Network/virtualNetworks/"
-    f"{config.batch_vnet_name}/subnets/{config.compute_subnet_name}"
-)
-# pool_id="batch-ws-pool"
-# pool_vm_size="STANDARD_F2s_v2"
-nfs_share_hostname = "${nfs_storage_account_name}.file.core.windows.net"
-nfs_share_directory = "/${nfs_storage_account_name}/shared"
-
-# https://stackoverflow.com/questions/46756780/azure-batch-pool-how-do-i-use-a-custom-vm-image-via-python
-# Für netzwerk sachen sind die rechte heir nicht ausreichend!
-credentials = SharedKeyCredentials(
-    config.BATCH_ACCOUNT_NAME,
-    config.BATCH_ACCOUNT_KEY
-)
-
-# https://docs.microsoft.com/en-us/python/api/azure.batch.batchserviceclient
-batch_client = BatchServiceClient(
-    credentials,
-    batch_url=config.BATCH_ACCOUNT_URL
-)
-
-
-bf.create_pool(batch_client, config.POOL_ID)
-
-batch_client.pool.get( config.POOL_ID,).state.upper()
-batch_client.pool.get( config.POOL_ID,).current_dedicated_nodes
-
-while batch_client.pool.get(config.POOL_ID,).current_dedicated_nodes == 0:
-    print("Pool is starting!")
-    time.sleep(10)
-
-time.sleep(10)
-
-node_list = list(batch_client.compute_node.list(config.POOL_ID))
-while any(node.state.lower()=="creating" for node in node_list):
-    print("Nodes are being created")
-    time.sleep(10)
-    node_list = list(batch_client.compute_node.list(config.POOL_ID))
-
-time.sleep(10)
-node_list = list(batch_client.compute_node.list(config.POOL_ID))
-
-while any(node.state.lower()=="waitingforstarttask" for node in node_list):
-    print("Start task is running!")
-    time.sleep(10)
-    node_list = list(batch_client.compute_node.list(config.POOL_ID))
-
-
-# here: checking whether pool is up or not!
-
-full_id = f"palm-sim-task{config.JOB_ID}"
-display_name = f"palm-sim{config.JOB_ID}"
-
-
-
-# batch_client.pool.delete(config.POOL_ID)
-
-input_file_paths = [
-    os.path.join(sys.path[0], 'test_p3d'),
-    os.path.join(sys.path[0], 'test_static')
-]
-# Upload the data files.
-
-
-blob_service_client = BlobServiceClient(
-        account_url=(
-            f"https://{config.STORAGE_ACCOUNT_NAME}."
-            f"{config.STORAGE_ACCOUNT_DOMAIN}/"
-        ),
-        credential=config.STORAGE_ACCOUNT_KEY
-    )
-
-input_files = [
-    af.upload_file_to_container(
-        blob_service_client,
-        "statictest",
-        file_path
-    )
-    for file_path
-    in input_file_paths
-]
-
-new_job = "asd244f"
-
-create_job(batch_client, new_job, config.POOL_ID)
-add_tasks(batch_client, new_job, 26)

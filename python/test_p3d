@@ -1,0 +1,187 @@
+!-------------------------------------------------------------------------------
+!-- INITIALIZATION PARAMETER NAMELIST
+!   Documentation: https://palm.muk.uni-hannover.de/trac/wiki/doc/app/inipar
+!-------------------------------------------------------------------------------
+&initialization_parameters
+!
+!-- Grid
+!------------------------------------------------------------------------------
+    nx                         = 191,
+    ny                         = 191,
+    nz                         = 256,
+    dx                         = 10.0,
+    dy                         = 10.0,
+    dz                         = 10.0,
+    dz_stretch_factor          = 1.04,
+    dz_stretch_level           = 880.,
+    dz_max                     = 50.,
+!
+!-- Initialization
+!------------------------------------------------------------------------------
+    initializing_actions       = 'set_constant_profiles',
+!
+!-- Boundary conditions
+!-------------------------------------------------------------------------------
+    constant_flux_layer        = .TRUE.,
+    ! bc_lr                      = "dirichlet/radiation",
+!
+!-- Numerics
+!------------------------------------------------------------------------------
+!    psolver                    = 'multigrid',
+!    cycle_mg                   = 'w',
+!    mg_cycles                  = 2,
+!
+!-- Rayleigh damping
+!------------------------------------------------------------------------------
+    rayleigh_damping_factor    = 0.2,
+    rayleigh_damping_height    = 2000.,
+!
+!-- Humidity
+!------------------------------------------------------------------------------
+    humidity                   = .T.,
+!
+!-- Time
+!--------------------------------------
+    origin_date_time           = '2010-06-26 10:00:00 +00',
+!
+!-- wall/soil spinup
+!--------------------------------------
+    spinup_time                = 0.0,  ! 24h wall/soil spinup
+    spinup_pt_mean             = 295.15,
+    spinup_pt_amplitude        = 5.0,
+    dt_spinup                  = 10.0,     ! time step during spinup
+    data_output_during_spinup  = .F.,      ! set .T. if you want output
+!
+!-- Topography
+!------------------------------------------------------------------------------
+    topography                 = 'read_from_file',
+!
+/ ! End of initialization parameter namelist
+
+
+!-------------------------------------------------------------------------------
+!-- RUNTIME PARAMETER NAMELIST
+!   Documentation: https://palm.muk.uni-hannover.de/trac/wiki/doc/app/d3par
+!-------------------------------------------------------------------------------
+&runtime_parameters
+!
+!-- Run steering
+!------------------------------------------------------------------------------
+    end_time                   = 100.0,
+!
+!-- data output
+!-------------------------------------------------------------------------------
+    netcdf_data_format         = 5, ! Data format for netCDF files
+!
+!-- Run-control/timeseries output settings
+!------------------------------------------------------------------------------
+    dt_run_control             =  60.0,
+!
+!-- Profile output settings
+!------------------------------------------------------------------------------
+    skip_time_dopr             = 0.0,
+    dt_dopr                    = 600.0,
+    averaging_interval_pr      = 600.0,
+    dt_averaging_input_pr      = 60.0,
+
+    data_output_pr             = '#u',  'u*2',  'wu',  'w*u*',  'w"u"',
+                                 '#v',  'v*2',  'wv',  'w*v*',  'w"v"',
+                                 'w',  'w*2',
+                                 '#theta', 'theta*2', 'wtheta', 'w*theta*', 'w"theta"',
+                                 '#q',  'q*2',
+                                 'e', 'e*', '#km', '#l',
+!
+!-- 2D/3D output settings
+!------------------------------------------------------------------------------
+    do3d_at_begin              = .T.,
+    do2d_at_begin              = .T.,
+    dt_data_output             = 100.0,
+    dt_do3d                    = 100.0,
+    dt_do2d_xz                 = 100.0,
+    dt_do2d_yz                 = 100.0,
+    dt_do2d_xy                 = 100.0,
+    dt_data_output_av          = 100.0,
+    averaging_interval         = 100.0,
+    dt_averaging_input         = 60.0,
+	
+	section_xy         = 0,1,
+
+
+    data_output                = 'theta',
+                                 'u',
+                                 'v',   
+                                 'w',
+                                 'q',
+                                 'e',
+                                 ! 'p',
+                                 'theta_av',
+								 ! 'rtm_mrt_down',
+								 'bio_mrt',           
+                                 'bio_mrt_av',
+                                 'bio_mrt_xy',       
+                                 'bio_mrt_xy_av', 							 
+                                 ! 'u_av',
+                                 ! 'v_av',   
+                                 ! 'w_av',
+                                 ! 'q_av',
+                                 ! 'e_av',
+                                 ! 'p_av',
+
+!
+/ ! end of d3par namelist
+!
+!---------------------------------------------------------------------------------------
+!-- RADIATION MODEL PARAMETER NAMELIST
+!   Documentation: https://palm.muk.uni-hannover.de/trac/wiki/doc/app/radpar
+!---------------------------------------------------------------------------------------
+ &radiation_parameters
+    radiation_scheme           = 'clear-sky',
+    dt_radiation               = 60.0,
+    surface_reflections        = .T.,
+    nrefsteps                  = 3,
+	mrt_nlevels = 5,
+!
+ / ! end of radiation_parameters namelist
+!
+!------------------------------------------------------------------------------
+!-- URBAN SURFACE MODEL PARAMETER NAMELIST
+!   Documentation: https://palm.muk.uni-hannover.de/trac/wiki/doc/app/usmpar
+!------------------------------------------------------------------------------
+ &urban_surface_parameters
+    roof_inner_temperature     = 293.15,
+    wall_inner_temperature     = 293.15,
+    window_inner_temperature   = 293.15,
+!
+ / ! end of urban_surface_parameters namelist
+!-------------------------------------------------------------------------------
+!-- BIOMETEOROLOGY MODULE PARAMETER NAMELIST
+!   Documentation: https://palm.muk.uni-hannover.de/trac/wiki/doc/app/biomet
+!-------------------------------------------------------------------------------
+ &biometeorology_parameters
+ 
+ /
+
+!------------------------------------------------------------------------------
+!-- LAND SURFACE MODEL PARAMETER NAMELIST
+!   Documentation: https://palm.muk.uni-hannover.de/trac/wiki/doc/app/lsmpar
+!------------------------------------------------------------------------------
+ &land_surface_parameters
+    soil_temperature = 297.560, 297.560, 297.560, 296.315, 293.826, 291.148, 287.869, 284.990,
+    soil_moisture = 0.22657, 0.22657, 0.22657, 0.23152, 0.24142, 0.25522, 0.27662, 0.30248,
+    deep_soil_temperature = 280.032,
+    constant_roughness         = .T.,
+!
+ / ! end of land_surface_parameters namelist
+!
+!------------------------------------------------------------------------------
+!-- PLANT CANOPY MODEL PARAMETER NAMELIST
+!   Documentation: https://palm.muk.uni-hannover.de/trac/wiki/doc/app/canpar
+!------------------------------------------------------------------------------
+ &plant_canopy_parameters
+    canopy_mode                = 'read_from_file',
+    canopy_drag_coeff          = 0.2,
+!
+ / ! end of plant_canopy_parameters namelist
+
+
+

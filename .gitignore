@@ -33,3 +33,5 @@ variables.sh
 *.json
 
 config.py
+
+__pycache__
