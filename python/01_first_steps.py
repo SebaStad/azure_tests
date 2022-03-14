@@ -125,7 +125,7 @@ def create_job(batch_service_client: BatchServiceClient, job_id: str, pool_id: s
 def add_tasks(
     batch_service_client: BatchServiceClient,
     job_id: str,
-    ressource_file,
+    ressource_file = [],
     idx=1
 ):
     """
@@ -318,7 +318,7 @@ input_files = [
     in input_file_paths
 ]
 
-new_job = "asd244f"
+new_job = "test_palm1"
 
 create_job(batch_client, new_job, config.POOL_ID)
-add_tasks(batch_client, new_job, 26)
+add_tasks(batch_client, new_job,input_files, 1111)

@@ -4,6 +4,10 @@ sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install -y make c
 
 echo "Downloading palm"
 
+if [ -f /etc/profile.d/modules.sh ]; then
+        . /etc/profile.d/modules.sh
+fi
+
 export BASEDIR=/palmbase
 mkdir $BASEDIR
 cd $BASEDIR

@@ -1,3 +1,7 @@
+if [ -f /etc/profile.d/modules.sh ]; then
+        . /etc/profile.d/modules.sh
+fi
+
 export cwd=$(pwd)
 export BASEDIR=/palmbase
 
