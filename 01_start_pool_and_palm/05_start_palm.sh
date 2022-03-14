@@ -3,7 +3,7 @@
 # Variables
 source variables.sh
 
-run_id="123"
+run_id="125"
 
 # Create job to create the application packahe
 az batch job create --id palm-sim${run_id} --pool-id ${pool_id}
@@ -17,16 +17,16 @@ cat << EOF >  palm_run.json
 {
     "id": "$full_id",
     "displayName": "$display_name",
-    "commandLine": "/bin/bash -c 'wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/test_modules.sh;chmod u+x test_modules.sh;./test_modules.sh'",
+    "commandLine": "/bin/bash -c 'wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/startup_tasks_manual.sh;chmod u+x startup_tasks_manual.sh;./startup_tasks_manual.sh'",
     "resourceFiles": [],
     "environmentSettings": [
       {
         "name": "NODES",
-        "value": "2"
+        "value": "1"
       },
       {
         "name": "PPN",
-        "value": "2"
+        "value": "40"
       }
     ],
     "constraints": {
@@ -37,12 +37,12 @@ cat << EOF >  palm_run.json
     "userIdentity": {
       "autoUser": {
         "scope": "pool",
-        "elevationLevel": "nonadmin"
+        "elevationLevel": "admin"
       }
     },
     "multiInstanceSettings": {
       "coordinationCommandLine": "/bin/bash -c env",
-      "numberOfInstances": 2,
+      "numberOfInstances": 1,
       "commonResourceFiles": []
     }
   }

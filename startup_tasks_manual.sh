@@ -11,6 +11,7 @@ fi
 export BASEDIR=/palmbase
 mkdir $BASEDIR
 cd $BASEDIR
+sudo chmod -R 777 .
 wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
 
 wget -c http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
@@ -36,15 +37,18 @@ export CXX=mpicxx
 export FC=mpif90
 
 cd $BASEDIR
-
+sudo chmod -R 777 .
 tar -xvzf zlib-1.2.11.tar.gz
+sudo chmod -R 777 .
 cd zlib-1.2.11/
 ./configure --prefix=$DIR
 make
 make install
 
 cd $BASEDIR
+sudo chmod -R 777 .
 tar -xvzf hdf5-1.12.0.tar.gz
+sudo chmod -R 777 .
 cd hdf5-1.12.0
 export FLAGS=-fPIC
 ./configure --prefix=$DIR --with-zlib=$DIR --enable-fortran --enable-parallel --enable-shared
@@ -57,8 +61,9 @@ export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH
 
 
 cd $BASEDIR
-
+sudo chmod -R 777 .
 tar -xvzf v4.7.4.tar.gz
+sudo chmod -R 777 .
 cd netcdf-c-4.7.4/
 
 export LDFLAGS=-L$DIR/lib
@@ -72,7 +77,9 @@ export NETCDF=$DIR
 
 
 cd $BASEDIR
+sudo chmod -R 777 .
 tar -xvzf v4.5.4.tar.gz
+sudo chmod -R 777 .
 cd netcdf-fortran-4.5.4/
 # export LIBS="-lnetcdf -lhdf5_hl -lhdf5 -lz"
 export LDFLAGS="-L$DIR/lib -fPIC"
@@ -83,6 +90,7 @@ make install
 
 
 cd $BASEDIR/palm_model_system-master
+sudo chmod -R 777 .
 bash install -p ../palm
 
 echo "Copying basefile"
