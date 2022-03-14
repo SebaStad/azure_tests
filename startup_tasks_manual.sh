@@ -12,7 +12,7 @@ export BASEDIR=/palmbase
 mkdir $BASEDIR
 cd $BASEDIR
 sudo chmod -R 777 .
-wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz && cd palm_model_system-master/
+wget https://gitlab.palm-model.org/releases/palm_model_system/-/archive/master/palm_model_system-master.tar.gz && tar -xf palm_model_system-master.tar.gz
 
 wget -c http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
 wget -c https://www.zlib.net/zlib-1.2.11.tar.gz
