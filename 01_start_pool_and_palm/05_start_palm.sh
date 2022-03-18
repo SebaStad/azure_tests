@@ -3,7 +3,7 @@
 # Variables
 source variables.sh
 
-run_id="126"
+run_id="129"
 
 # Create job to create the application packahe
 az batch job create --id palm-sim${run_id} --pool-id ${pool_id}
@@ -17,7 +17,7 @@ cat << EOF >  palm_run.json
 {
     "id": "$full_id",
     "displayName": "$display_name",
-    "commandLine": "/bin/bash -c 'wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/startup_tasks_manual.sh;chmod u+x startup_tasks_manual.sh;./startup_tasks_manual.sh'",
+    "commandLine": "/bin/bash -c 'wget -L https://raw.githubusercontent.com/SebaStad/azure_tests/main/run_palm.sh;chmod u+x run_palm.sh;./run_palm.sh'",
     "resourceFiles": [],
     "environmentSettings": [
       {

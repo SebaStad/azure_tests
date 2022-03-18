@@ -125,7 +125,7 @@ def create_job(batch_service_client: BatchServiceClient, job_id: str, pool_id: s
 def add_tasks(
     batch_service_client: BatchServiceClient,
     job_id: str,
-    ressource_file = [],
+    ressource_file=[],
     idx=1
 ):
     """
@@ -140,8 +140,8 @@ def add_tasks(
     display_name = f"palm-sim{config.JOB_ID}"
     tasks = []
     command = (
-        "/bin/bash -c 'wget -L https://raw.githubusercontent.com/"
-        "SebaStad/azure_tests/main/run_palm.sh;"
+        "/bin/bash -c 'wget -L https://raw.githubusercontent.com/SebaStad/"
+        "azure_tests/main/run_palm.sh;"
         "chmod u+x run_palm.sh;./run_palm.sh'"
     )
     tasks.append(batchmodels.TaskAddParameter(
@@ -152,11 +152,11 @@ def add_tasks(
         environment_settings=[
             batchmodels.EnvironmentSetting(
                 name="NODES",
-                value="2"
+                value="1"
             ),
             batchmodels.EnvironmentSetting(
                 name="PPN",
-                value="44"
+                value="20"
             )
         ],
         constraints=batchmodels.TaskConstraints(
@@ -166,13 +166,13 @@ def add_tasks(
         ),
         multi_instance_settings=batchmodels.MultiInstanceSettings(
             coordination_command_line="/bin/bash -c env",
-            number_of_instances=2,
+            number_of_instances=1,
             common_resource_files=[]
         ),
         user_identity=batchmodels.UserIdentity(
             auto_user=batchmodels.AutoUserSpecification(
                 scope="pool",
-                elevation_level="nonadmin"
+                elevation_level="admin"
             )
         )
     ))
@@ -318,7 +318,7 @@ input_files = [
     in input_file_paths
 ]
 
-new_job = "test_palm1"
+new_job = "test_palm0024"
 
 create_job(batch_client, new_job, config.POOL_ID)
-add_tasks(batch_client, new_job,input_files, 1111)
+add_tasks(batch_client, new_job, input_files, 1)

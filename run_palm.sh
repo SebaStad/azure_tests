@@ -7,8 +7,7 @@ export BASEDIR=/palmbase
 
 unzip test.zip
 
-cd $BASEDIR/palm
-module load mpi/hpcx
+
 
 
 mkdir -p $BASEDIR/palm/JOBS/gui_run/INPUT
@@ -17,7 +16,8 @@ find $cwd -name "*dynamic" -exec cp {} $BASEDIR/palm/JOBS/gui_run/INPUT/gui_run_
 find $cwd -name "*static" -exec cp {} $BASEDIR/palm/JOBS/gui_run/INPUT/gui_run_static \;
 find $cwd -name "*p3d" -exec cp {} $BASEDIR/palm/JOBS/gui_run/INPUT/gui_run_p3d \;
 
-
+cd $BASEDIR/palm
+module load mpi/hpcx
 
 
 # here
