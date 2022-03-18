@@ -318,7 +318,7 @@ input_files = [
     in input_file_paths
 ]
 
-new_job = "test_palm0028"
+new_job = "test_palm0029"
 
 create_job(batch_client, new_job, config.POOL_ID)
 add_tasks(batch_client, new_job, input_files, 1)
