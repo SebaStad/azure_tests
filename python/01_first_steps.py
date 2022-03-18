@@ -172,7 +172,7 @@ def add_tasks(
         user_identity=batchmodels.UserIdentity(
             auto_user=batchmodels.AutoUserSpecification(
                 scope="pool",
-                elevation_level="admin"
+                elevation_level="nonadmin"
             )
         )
     ))
@@ -318,7 +318,7 @@ input_files = [
     in input_file_paths
 ]
 
-new_job = "test_palm0025"
+new_job = "test_palm0028"
 
 create_job(batch_client, new_job, config.POOL_ID)
 add_tasks(batch_client, new_job, input_files, 1)

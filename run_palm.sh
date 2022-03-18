@@ -4,6 +4,7 @@ fi
 
 export cwd=$(pwd)
 export BASEDIR=/palmbase
+export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH
 
 unzip test.zip
 
