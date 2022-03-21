@@ -2,6 +2,7 @@
 import datetime
 import io
 import os
+from pickle import FALSE
 import sys
 import time
 
@@ -10,6 +11,7 @@ from azure.storage.blob import (
     BlobSasPermissions,
     generate_blob_sas
 )
+
 from azure.batch import BatchServiceClient
 from azure.batch.batch_auth import SharedKeyCredentials
 from azure.identity import UsernamePasswordCredential
@@ -18,6 +20,8 @@ from azure.identity import ClientSecretCredential
 import azure.batch.models as batchmodels
 import azure.batch.operations as batchoperations
 from azure.core.exceptions import ResourceExistsError
+
+import azure.storage.blob.models as azureblob
 
 import config
 
@@ -83,9 +87,9 @@ def create_pool(batch_service_client: BatchServiceClient, pool_id: str):
         start_task=batchmodels.StartTask(
             command_line=(
                 "bash -c \"wget -L https://raw.githubusercontent.com/"
-                "SebaStad/azure_tests/main/startup_tasks_manual.sh;"
-                "chmod u+x startup_tasks_manual.sh;"
-                "./startup_tasks_manual.sh\""
+                "SebaStad/azure_tests/main/startup_task_simple.sh;"
+                "chmod u+x startup_task_simple.sh;"
+                "./startup_task_simple.sh\""
             ),
             user_identity=batchmodels.UserIdentity(
                 auto_user=batchmodels.AutoUserSpecification(
@@ -126,7 +130,8 @@ def add_tasks(
     batch_service_client: BatchServiceClient,
     job_id: str,
     ressource_file=[],
-    idx=1
+    idx=1,
+    output_container_sas_url=[]
 ):
     """
     Adds a task for each input file in the collection to the specified job.
@@ -174,7 +179,23 @@ def add_tasks(
                 scope="pool",
                 elevation_level="nonadmin"
             )
-        )
+        ),
+        output_files=[
+            batchmodels.OutputFile(
+                file_pattern="/palmbase/palm/JOBS/gui_run/OUTPUT/gui_run_av_3d.001.nc",
+                destination=batchmodels.OutputFileDestination(
+                    container=batchmodels.OutputFileBlobContainerDestination(
+                        path="",
+                        container_url=output_container_sas_url
+                        )
+                    ),
+                upload_options=batchmodels.OutputFileUploadOptions(
+                    upload_condition=(
+                        batchmodels.OutputFileUploadCondition.task_success
+                    )
+                )
+            )
+        ]
     ))
     batch_service_client.task.add_collection(job_id, tasks)
 
@@ -230,7 +251,6 @@ def generate_sas_url(
     """
     return f"https://{account_name}.{account_domain}/{container_name}/{blob_name}?{sas_token}"
 
-
 # ----------------------------------------------------
 # Create Pool!
 # ----------------------------------------------------
@@ -259,7 +279,7 @@ batch_client = BatchServiceClient(
 )
 
 
-create_pool(batch_client, config.POOL_ID)
+bf.create_pool(batch_client, config.POOL_ID)
 
 batch_client.pool.get( config.POOL_ID,).state.upper()
 batch_client.pool.get( config.POOL_ID,).current_dedicated_nodes
@@ -318,7 +338,48 @@ input_files = [
     in input_file_paths
 ]
 
-new_job = "test_palm0032"
+output_container_name = "output"
+
+
+blob_service_client.create_container(
+    name=output_container_name
+)
+
+# https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob?view=azure-python#azure-storage-blob-generate-blob-sas
+sas_token = generate_blob_sas(
+    account_name=config.STORAGE_ACCOUNT_NAME,
+    container_name=output_container_name,
+    blob_name="",
+    account_key=config.STORAGE_ACCOUNT_KEY,
+    permission=BlobSasPermissions(
+        read=True,
+        add=True,
+        create=True,
+        write=True,
+        delete=True
+    ),
+    expiry=(datetime.datetime.utcnow() + datetime.timedelta(hours=4)),
+)
+
+output_container_sas_url = generate_sas_url(
+    config.STORAGE_ACCOUNT_NAME,
+    config.STORAGE_ACCOUNT_DOMAIN,
+    output_container_name,
+    "",
+    sas_token
+)
+
+# output_container_sas_url = get_container_sas_url(
+#         blob_service_client,
+#         output_container_name,
+#         azureblob.BlobPermissions.WRITE)
+
+new_job = "test_palm0055"
 
 create_job(batch_client, new_job, config.POOL_ID)
-add_tasks(batch_client, new_job, input_files, 1)
+add_tasks(batch_client, new_job, input_files, 1, output_container_sas_url)
+
+
+
+# https://docs.microsoft.com/en-us/answers/questions/334786/azure-blob-storage-fails-to-authenticate-34make-su.html
+# https://stackoverflow.com/questions/24492790/azurestorage-blob-server-failed-to-authenticate-the-request-make-sure-the-value
