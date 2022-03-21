@@ -185,7 +185,7 @@ def add_tasks(
                 file_pattern="/palmbase/palm/JOBS/gui_run/OUTPUT/gui_run_av_3d.001.nc",
                 destination=batchmodels.OutputFileDestination(
                     container=batchmodels.OutputFileBlobContainerDestination(
-                        path="",
+                        path=output_file_name,
                         container_url=output_container_sas_url
                         )
                     ),
@@ -339,6 +339,7 @@ input_files = [
 ]
 
 output_container_name = "output"
+output_file_name = "test.nc"
 
 
 blob_service_client.create_container(
@@ -349,7 +350,7 @@ blob_service_client.create_container(
 sas_token = generate_blob_sas(
     account_name=config.STORAGE_ACCOUNT_NAME,
     container_name=output_container_name,
-    blob_name="",
+    blob_name=output_file_name,
     account_key=config.STORAGE_ACCOUNT_KEY,
     permission=BlobSasPermissions(
         read=True,
@@ -365,7 +366,7 @@ output_container_sas_url = generate_sas_url(
     config.STORAGE_ACCOUNT_NAME,
     config.STORAGE_ACCOUNT_DOMAIN,
     output_container_name,
-    "",
+    output_file_name,
     sas_token
 )
 
@@ -374,7 +375,7 @@ output_container_sas_url = generate_sas_url(
 #         output_container_name,
 #         azureblob.BlobPermissions.WRITE)
 
-new_job = "test_palm0055"
+new_job = "test_palm0060"
 
 create_job(batch_client, new_job, config.POOL_ID)
 add_tasks(batch_client, new_job, input_files, 1, output_container_sas_url)

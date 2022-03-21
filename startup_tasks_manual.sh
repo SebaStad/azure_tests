@@ -100,3 +100,6 @@ echo "Copying basefile"
 
 cd ../palm && mkdir -p JOBS/example_cbl/INPUT 
 cp ../palm_model_system-master/packages/palm/model/tests/cases/example_cbl/INPUT/example_cbl_p3d JOBS/example_cbl/INPUT/
+
+cd $BASEDIR
+sudo chmod -R 777 .
