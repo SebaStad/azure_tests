@@ -8,8 +8,10 @@ import time
 from azure.storage.blob import (
     BlobServiceClient,
     BlobSasPermissions,
-    generate_blob_sas
+    generate_blob_sas,
+    generate_container_sas
 )
+
 from azure.batch import BatchServiceClient
 from azure.batch.batch_auth import SharedKeyCredentials
 from azure.identity import UsernamePasswordCredential

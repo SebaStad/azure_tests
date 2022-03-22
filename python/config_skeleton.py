@@ -43,6 +43,14 @@ nfs_share="shared"
 pool_id="batch-ws2-pool"
 # Wuerde ich hier definieren
 
+# Zip Datei mit allen Eingangsdaten:
+# Unterstützt derzeit
+# static driver
+# dynamic driver
+# p3d
+# Dateien müssen zumindest die richtige Endung (p3d, static, dynamic ) haben
+palm_zip_file = "test.zip"
+
 
 BATCH_ACCOUNT_NAME = ''  # Your batch account name
 BATCH_ACCOUNT_KEY = ''  # Your batch account key

@@ -1,4 +1,3 @@
-
 import datetime
 import io
 import os
@@ -22,22 +21,8 @@ import azure.batch.models as batchmodels
 import azure.batch.operations as batchoperations
 from azure.core.exceptions import ResourceExistsError
 
-import azure.storage.blob.models as azureblob
-
 import config
 
-import azure_functions as af
-import batch_functions as bf
-
-DEFAULT_ENCODING = "utf-8"
-
-"""
-Bash Scripts 01 - 03 must be carried out first!
-These should be implemented in first start of simulation container!
-However, e.g. storage is not need
-so wee need the account (maybe hard set) and the network!
-"""
-#
 
 # ----------------------------------------------------
 # functions
@@ -88,9 +73,9 @@ def create_pool(batch_service_client: BatchServiceClient, pool_id: str):
         start_task=batchmodels.StartTask(
             command_line=(
                 "bash -c \"wget -L https://raw.githubusercontent.com/"
-                "SebaStad/azure_tests/main/startup_task_simple.sh;"
-                "chmod u+x startup_task_simple.sh;"
-                "./startup_task_simple.sh\""
+                "SebaStad/azure_tests/main/startup_tasks_manual.sh;"
+                "chmod u+x startup_tasks_manual.sh;"
+                "./startup_tasks_manual.sh\""
             ),
             user_identity=batchmodels.UserIdentity(
                 auto_user=batchmodels.AutoUserSpecification(
@@ -105,7 +90,11 @@ def create_pool(batch_service_client: BatchServiceClient, pool_id: str):
     batch_service_client.pool.add(new_pool)
 
 
-def create_job(batch_service_client: BatchServiceClient, job_id: str, pool_id: str):
+def create_job(
+    batch_service_client: BatchServiceClient,
+    job_id: str,
+    pool_id: str
+):
     """
     Creates a job with the specified ID, associated with the specified pool.
 
@@ -132,7 +121,8 @@ def add_tasks(
     job_id: str,
     ressource_file=[],
     idx=1,
-    output_container_sas_url=[]
+    output_container_sas_url=[],
+    file_pattern="/palmbase/palm/JOBS/gui_run/OUTPUT/*"
 ):
     """
     Adds a task for each input file in the collection to the specified job.
@@ -158,7 +148,7 @@ def add_tasks(
         environment_settings=[
             batchmodels.EnvironmentSetting(
                 name="NODES",
-                value="1"
+                value=str(config.POOL_NODE_COUNT)
             ),
             batchmodels.EnvironmentSetting(
                 name="PPN",
@@ -183,7 +173,7 @@ def add_tasks(
         ),
         output_files=[
             batchmodels.OutputFile(
-                file_pattern="/palmbase/palm/JOBS/gui_run/OUTPUT/gui_run_av_3d*",
+                file_pattern=file_pattern,
                 destination=batchmodels.OutputFileDestination(
                     container=batchmodels.OutputFileBlobContainerDestination(
                         container_url=output_container_sas_url
@@ -214,7 +204,10 @@ def upload_file_to_container(
     tasks.
     """
     blob_name = os.path.basename(file_path)
-    blob_client = blob_storage_service_client.get_blob_client(container_name, blob_name)
+    blob_client = blob_storage_service_client.get_blob_client(
+        container_name,
+        blob_name
+    )
     print(f'Uploading file {file_path} to container [{container_name}]...')
     with open(file_path, "rb") as data:
         blob_client.upload_blob(data, overwrite=True)
@@ -249,147 +242,15 @@ def generate_sas_url(
     """
     Generates and returns a sas url for accessing blob storage
     """
-    return f"https://{account_name}.{account_domain}/{container_name}/{blob_name}?{sas_token}"
-
-# ----------------------------------------------------
-# Create Pool!
-# ----------------------------------------------------
-
-compute_subnet_id = (
-    f"/subscriptions/{config.subscription_id}/resourceGroups/"
-    f"{config.batch_rg}/providers/Microsoft.Network/virtualNetworks/"
-    f"{config.batch_vnet_name}/subnets/{config.compute_subnet_name}"
-)
-# pool_id="batch-ws-pool"
-# pool_vm_size="STANDARD_F2s_v2"
-nfs_share_hostname = "${nfs_storage_account_name}.file.core.windows.net"
-nfs_share_directory = "/${nfs_storage_account_name}/shared"
-
-# https://stackoverflow.com/questions/46756780/azure-batch-pool-how-do-i-use-a-custom-vm-image-via-python
-# Für netzwerk sachen sind die rechte heir nicht ausreichend!
-credentials = SharedKeyCredentials(
-    config.BATCH_ACCOUNT_NAME,
-    config.BATCH_ACCOUNT_KEY
-)
-
-# https://docs.microsoft.com/en-us/python/api/azure.batch.batchserviceclient
-batch_client = BatchServiceClient(
-    credentials,
-    batch_url=config.BATCH_ACCOUNT_URL
-)
-
-
-bf.create_pool(batch_client, config.POOL_ID)
-
-batch_client.pool.get( config.POOL_ID,).state.upper()
-batch_client.pool.get( config.POOL_ID,).current_dedicated_nodes
-
-while batch_client.pool.get(config.POOL_ID,).current_dedicated_nodes == 0:
-    print("Pool is starting!")
-    time.sleep(10)
-
-time.sleep(10)
-
-node_list = list(batch_client.compute_node.list(config.POOL_ID))
-while any(node.state.lower()=="creating" for node in node_list):
-    print("Nodes are being created")
-    time.sleep(10)
-    node_list = list(batch_client.compute_node.list(config.POOL_ID))
-
-time.sleep(10)
-node_list = list(batch_client.compute_node.list(config.POOL_ID))
-
-while any(node.state.lower()=="waitingforstarttask" for node in node_list):
-    print("Start task is running!")
-    time.sleep(10)
-    node_list = list(batch_client.compute_node.list(config.POOL_ID))
-
-
-# here: checking whether pool is up or not!
-
-full_id = f"palm-sim-task{config.JOB_ID}"
-display_name = f"palm-sim{config.JOB_ID}"
-
-
-
-# batch_client.pool.delete(config.POOL_ID)
-
-input_file_paths = [
-    os.path.join(sys.path[0], 'test.zip')
-]
-# Upload the data files.
-
-
-blob_service_client = BlobServiceClient(
-        account_url=(
-            f"https://{config.STORAGE_ACCOUNT_NAME}."
-            f"{config.STORAGE_ACCOUNT_DOMAIN}/"
-        ),
-        credential=config.STORAGE_ACCOUNT_KEY
+    return (
+        f"https://{account_name}.{account_domain}/"
+        f"{container_name}/{blob_name}?{sas_token}"
     )
 
-input_files = [
-    af.upload_file_to_container(
-        blob_service_client,
-        "statictest",
-        file_path
-    )
-    for file_path
-    in input_file_paths
-]
-
-output_container_name = "output2"
-output_file_name = "test.nc"
-
-
-blob_service_client.create_container(
-    name=output_container_name
-)
-
-# https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob?view=azure-python#azure-storage-blob-generate-blob-sas
-sas_container_token = generate_container_sas(
-    account_name=config.STORAGE_ACCOUNT_NAME,
-    container_name=output_container_name,
-    account_key=config.STORAGE_ACCOUNT_KEY,
-    permission=BlobSasPermissions(
-        read=True,
-        add=True,
-        create=True,
-        write=True,
-        delete=True
-    ),
-    expiry=(datetime.datetime.utcnow() + datetime.timedelta(hours=4)),
-)
 
 def get_container_sas_url(container_name, sas_token):
-    """
-    Obtains a shared access signature URL that provides write access to the 
-    ouput container to which the tasks will upload their output.
-
-    :param block_blob_client: A blob service client.
-    :type block_blob_client: `azure.storage.blob.BlockBlobService`
-    :param str container_name: The name of the Azure Blob storage container.
-    :param BlobPermissions blob_permissions:
-    :rtype: str
-    :return: A SAS URL granting the specified permissions to the container.
-    """
-    ###    
-    #Construct SAS URL for the container
-    container_sas_url = f"https://{config.STORAGE_ACCOUNT_NAME}.blob.core.windows.net/{container_name}?{sas_token}"
+    container_sas_url = (
+        f"https://{config.STORAGE_ACCOUNT_NAME}.blob."
+        f"core.windows.net/{container_name}?{sas_token}"
+    )
     return container_sas_url
-
-
-output_container_sas_url = get_container_sas_url(
-    output_container_name,
-    sas_container_token
-)
-
-new_job = "test_palm0072"
-
-create_job(batch_client, new_job, config.POOL_ID)
-add_tasks(batch_client, new_job, input_files, 1, output_container_sas_url)
-
-
-
-# https://docs.microsoft.com/en-us/answers/questions/334786/azure-blob-storage-fails-to-authenticate-34make-su.html
-# https://stackoverflow.com/questions/24492790/azurestorage-blob-server-failed-to-authenticate-the-request-make-sure-the-value
