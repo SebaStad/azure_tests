@@ -30,7 +30,7 @@ import azure_batch_functions as abf
 # Preamble
 #######################
 upload_container_name = "statictest"
-output_container_name = "output2"
+output_container_name = "output3"
 output_file_name = "test.nc"
 
 #######################
@@ -67,7 +67,10 @@ batch_client = BatchServiceClient(
 #######################
 # Startup of Pool
 #######################
-abf.create_pool(batch_client, config.POOL_ID)
+try:
+    abf.create_pool(batch_client, config.POOL_ID)
+except Exception:
+    print("pool already exists")
 
 while batch_client.pool.get(config.POOL_ID,).current_dedicated_nodes == 0:
     print("Pool is starting!")
@@ -106,23 +109,29 @@ blob_service_client = BlobServiceClient(
     credential=config.STORAGE_ACCOUNT_KEY
 )
 
-input_files = [
-    abf.upload_file_to_container(
-        blob_service_client,
-        upload_container_name,
-        file_path
-    )
-    for file_path
-    in input_file_paths
-]
+try:
+    input_files = [
+        abf.upload_file_to_container(
+            blob_service_client,
+            upload_container_name,
+            file_path
+        )
+        for file_path
+        in input_file_paths
+    ]
+except Exception:
+    print("Files already uploaded")
 
 #######################
 # Specify output container
 #######################
 
-blob_service_client.create_container(
-    name=output_container_name
-)
+try:
+    blob_service_client.create_container(
+        name=output_container_name
+    )
+except:
+    print("Container already exists")
 #######################
 # https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob?view=azure-python#azure-storage-blob-generate-blob-sas
 #######################
@@ -147,7 +156,7 @@ output_container_sas_url = abf.get_container_sas_url(
     sas_container_token
 )
 
-new_job = "test_palm0073"
+new_job = "test_palm0075"
 
 abf.create_job(batch_client, new_job, config.POOL_ID)
 abf.add_tasks(batch_client, new_job, input_files, 1, output_container_sas_url)
