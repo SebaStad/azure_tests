@@ -158,5 +158,8 @@ output_container_sas_url = abf.get_container_sas_url(
 
 new_job = "test_palm0075"
 
-abf.create_job(batch_client, new_job, config.POOL_ID)
-abf.add_tasks(batch_client, new_job, input_files, 1, output_container_sas_url)
+try:
+    abf.create_job(batch_client, new_job, config.POOL_ID)
+    abf.add_tasks(batch_client, new_job, input_files, 1, output_container_sas_url)
+except Exception:
+    print("Job already exists, changed variable new_job")
