@@ -30,8 +30,8 @@ import azure_batch_functions as abf
 # Preamble
 #######################
 upload_container_name = "statictest"
-output_container_name = "output3"
-output_file_name = "test.nc"
+output_container_name = "output_show"
+output_file_name = "test2.nc"
 
 #######################
 # Network Stuff
@@ -97,7 +97,8 @@ while any(node.state.lower()=="waitingforstarttask" for node in node_list):
 #######################
 
 input_file_paths = [
-    os.path.join(sys.path[0], config.palm_zip_file)
+    os.path.join(sys.path[0], "test_p3d"),
+    os.path.join(sys.path[0], "test_static")
 ]
 # Upload the data files.
 
@@ -156,7 +157,7 @@ output_container_sas_url = abf.get_container_sas_url(
     sas_container_token
 )
 
-new_job = "test_palm0075"
+new_job = "test_palm0080"
 
 try:
     abf.create_job(batch_client, new_job, config.POOL_ID)
