@@ -23,4 +23,4 @@ module load mpi/hpcx
 # copy input files to certain folder
 # with regex
 
-./bin/palmrun -a "d3#" -X 40 -r gui_run -B
+./bin/palmrun -a "d3#" -X 40 -r gui_run -B -v
