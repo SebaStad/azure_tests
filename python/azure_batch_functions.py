@@ -62,7 +62,7 @@ def create_pool(batch_service_client: BatchServiceClient, pool_id: str):
         # network_configuration=batchmodels.NetworkConfiguration(
         #     subnet_id=compute_subnet_id
         # ),
-        task_slots_per_node=1,
+        task_slots_per_node=2,
         task_scheduling_policy=batchmodels.TaskSchedulingPolicy(
             node_fill_type=batchmodels.ComputeNodeFillType(
                 "pack"

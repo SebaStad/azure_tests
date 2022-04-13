@@ -157,7 +157,7 @@ output_container_sas_url = abf.get_container_sas_url(
     sas_container_token
 )
 
-new_job = "test_palm0081"
+new_job = "test_palm01855443"
 
 try:
     abf.create_job(batch_client, new_job, config.POOL_ID)
