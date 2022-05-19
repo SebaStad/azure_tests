@@ -21,7 +21,7 @@ wget -c https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src
 wget -c https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.7.4.tar.gz
 wget -c https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.4.tar.gz
 
-export BASEDIR=/palmbase
+export BASEDIR=/mnt/batch/tasks/workitems/palmbase
 mkdir $BASEDIR
 module load mpi/hpcx
 
