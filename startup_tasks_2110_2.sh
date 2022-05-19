@@ -107,4 +107,4 @@ sudo chmod -R 777 .
 sudo chmod -R 777 /mnt/batch/tasks/workitems/
 cd $BASEDIR/palm
 
-awk 'NR==18 {$0="%output_data_path    /mnt/batch/tasks/workitems/"}  { print }' .palm.config.default
+awk 'NR==18 {$0="%output_data_path    /mnt/batch/tasks/workitems/"}  { print }' .palm.config.default > .palm.config.default
