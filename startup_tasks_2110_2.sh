@@ -1,5 +1,6 @@
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
+dpkg-reconfigure -pmedium unattended-upgrades
 echo "Update sys"
 sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install -y make cmake libfftw3-dev python3-pip python3-pyqt5 flex bison ncl-ncarg nmap libcurl4-openssl-dev
 
