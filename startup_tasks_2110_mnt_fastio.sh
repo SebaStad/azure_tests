@@ -108,7 +108,10 @@ sudo chmod -R 777 .
 sudo chmod -R 777 /mnt/batch/tasks/workitems/
 cd $BASEDIR/palm
 
+sudo mkdir -p /mnt/palm/tmp
+sudo chmod -R 777 /mnt/palm/tmp
+
 awk 'NR==18 {$0="%output_data_path    /mnt/batch/tasks/workitems/"}  1' .palm.config.default > .palm.config.tmp
-awk 'NR==16 {$0="%fast_io_catalog     /mnt/palm"}  1' .palm.config.tmp > .palm.config.tmp2
+awk 'NR==16 {$0="%fast_io_catalog     /mnt/palm/tmp"}  1' .palm.config.tmp > .palm.config.tmp2
 mv .palm.config.default .palm.config.backup
 mv .palm.config.tmp2 .palm.config.default
